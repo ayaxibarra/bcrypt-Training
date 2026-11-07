@@ -1,58 +1,31 @@
-import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
-import Navbar from './Navbar';
-import RegisterPage from './RegisterPage';
-import LoginPage from './LoginPage';
-import ProfilePage from './ProfilePage';
-import ProtectedRoute from './ProtectedRoute';
+import React, { useContext } from 'react';
+import { AuthProvider, AuthContext } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
+import Navbar from './components/Navbar';
+import LoginPage from './components/LoginPage';
+import ProductList from './components/ProductList';
 
-function App() {
-    const [currentUser, setCurrentUser] = useState(null);
+// Un subcomponente interno que SÍ está dentro de los Providers
+function MainContent() {
+  const { currentUser } = useContext(AuthContext); // ✅ Aquí ya funciona porque está dentro
 
-    // 1. Revisar si hay un token en localStorage al cargar la app por primera vez
-    useEffect(() => {
-        const token = localStorage.getItem('authToken');
-        if (token) {
-            try {
-                const decodedUser = jwtDecode(token);
-                setCurrentUser(decodedUser);
-            } catch (error) {
-                // Si el token es corrupto o inválido, lo borramos
-                localStorage.removeItem('authToken');
-            }
-        }
-    }, []);
-
-    // 2. Función de Logout
-    const handleLogout = () => {
-        localStorage.removeItem('authToken');
-        setCurrentUser(null);
-    };
-
-    return (
-        <Router>
-            <div style={{ fontFamily: 'sans-serif' }}>
-                <Navbar currentUser={currentUser} onLogout={handleLogout} />
-
-                <Routes>
-                    <Route path="/" element={<h2 style={{ textAlign: 'center' }}>Bienvenido a la Home Pública</h2>} />
-                    <Route path="/register" element={<RegisterPage />} />
-                    <Route path="/login" element={<LoginPage onLoginSuccess={(user) => setCurrentUser(user)} />} />
-                    
-                    {/* 3. Ruta protegida con el componente ProtectedRoute */}
-                    <Route 
-                        path="/profile" 
-                        element={
-                            <ProtectedRoute currentUser={currentUser}>
-                                <ProfilePage />
-                            </ProtectedRoute>
-                        } 
-                    />
-                </Routes>
-            </div>
-        </Router>
-    );
+  return (
+    <div className="app">
+      <Navbar />
+      <main className="main-content">
+        {currentUser ? <ProductList /> : <LoginPage />}
+      </main>
+    </div>
+  );
 }
 
-export default App;
+// App principal que provee el contexto
+export default function App() {
+  return (
+    <AuthProvider>
+      <CartProvider>
+        <MainContent />
+      </CartProvider>
+    </AuthProvider>
+  );
+}

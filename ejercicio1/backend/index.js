@@ -1,24 +1,24 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
+// index.js (o server.js)
 require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const conectarDB = require('./config/db'); // 👈 Importamos desde la carpeta config
 
 const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
-// Middlewares
+// 1. Conectar a la base de datos
+conectarDB();
+
+// 2. Middlewares
 app.use(express.json());
 app.use(cors());
 
-// Conexión a MongoDB (actualizada sin opciones obsoletas)
-mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log('🟢 Conectado exitosamente a MongoDB'))
-.catch((err) => console.error('🔴 Error de conexión a MongoDB:', err));
-
-// Rutas de la API
+// 3. Rutas de la API
 app.use('/api/users', userRoutes);
 
+// 4. Iniciar servidor
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`🚀 Servidor backend corriendo en el puerto ${PORT}`);

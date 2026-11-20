@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import {
     BrowserRouter as Router,
@@ -11,6 +10,8 @@ import Navbar from './Navbar';
 import { useAuth } from './context/AuthContext';
 
 import './App.css';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 // ==========================================
 // FORMULARIO DE REGISTRO
@@ -37,7 +38,7 @@ function RegisterForm() {
 
         try {
             const response = await fetch(
-                'http://localhost:5000/api/users/register',
+                `${API_URL}/api/users/register`,
                 {
                     method: 'POST',
                     headers: {
@@ -147,7 +148,7 @@ function LoginForm() {
 
         try {
             const response = await fetch(
-                'http://localhost:5000/api/users/login',
+                `${API_URL}/api/users/login`,
                 {
                     method: 'POST',
                     headers: {
@@ -247,7 +248,7 @@ function UserProfile() {
                 const token = localStorage.getItem('authToken');
 
                 const response = await fetch(
-                    'http://localhost:5000/api/users/profile',
+                    `${API_URL}/api/users/profile`,
                     {
                         method: 'GET',
                         headers: {

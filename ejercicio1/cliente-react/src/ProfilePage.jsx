@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 function ProfilePage() {
     const [profile, setProfile] = useState(null);
     const [error, setError] = useState('');
@@ -10,7 +12,7 @@ function ProfilePage() {
                 const token = localStorage.getItem('authToken');
                 if (!token) throw new Error('No hay sesión activa.');
 
-                const response = await fetch('http://localhost:5000/api/users/profile', {
+                const response = await fetch(`${API_URL}/api/users/profile`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

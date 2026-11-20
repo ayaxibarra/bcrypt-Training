@@ -1,28 +1,20 @@
-require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-
-// Importar las rutas de usuario
-const userRoutes = require('./routes/userRoutes');
-
+require('dotenv').config(); // Carga las variables de entorno
+const conectarDB = require('./config/db'); // 1. Importamos nuestra función de conexión
+ 
 const app = express();
-const PORT = process.env.PORT || 5000;
-
-// Middlewares
-app.use(cors());
+ 
+// 2. Conectar a la Base de Datos
+conectarDB();
+ 
+// Middleware
 app.use(express.json());
-
-// Conexión a MongoDB
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log('Conectado a MongoDB 🚀'))
-    .catch((err) => console.error('Error al conectar a MongoDB:', err));
-
-// Usar las rutas
-// Esto hace que la ruta completa sea: http://localhost:5000/api/users/register
-app.use('/api/users', userRoutes);
-
-// Iniciar servidor
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en el puerto ${PORT}`);
-});
+ 
+// Definición de Rutas
+app.use('/api/productos', require('./routes/productRoutes'));
+app.use('/api/usuarios', require('./routes/userRoutes'));
+ 
+// ... (Manejador de errores, etc.)
+ 
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => console.log(`Servidor corriendo en el puerto ${PORT}`));
